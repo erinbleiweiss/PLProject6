@@ -8,6 +8,7 @@ DEBUG = True
 # Namespace & built-in functions
 
 name = {}
+stored_vars = {}
 
 def cons(l):
     return [l[0]] + l[1]
@@ -56,21 +57,57 @@ def cond(l):
 
 name['cond'] = cond
 
+def read_vars(l):
+    for idx, item in enumerate(l):
+        if not isinstance(item, int):
+            l[idx] = stored_vars[item]
+    return l
+
 def add(l):
+    l = read_vars(l)
     return sum(l)
 
 name['+'] = add
 
 def minus(l):
-    '''Unary minus'''
-    return -l[0]
+    l = read_vars(l)
+    if len(l) == 1:
+        '''Unary minus'''
+        return -l[0]
+    elif len(l) == 2:
+        return l[0] - l[1]
 
 name['-'] = minus
+
+def multiply(l):
+    l = read_vars(l)
+    return l[0] * l[1]
+
+name['*'] = multiply
+
+def divide(l):
+    l = read_vars(l)
+    if l[1] == 0:
+        print("Divide by 0 error")
+    else:
+        return l[0] / l[1]
+
+name['/'] = divide
 
 def _print(l):
     print lisp_str(l[0])
 
 name['print'] = _print
+
+
+def let(l):
+    assignment = l[0]
+    for i in assignment:
+        if not isinstance(i, int):
+            del stored_vars[i]
+    print(l[-1])
+
+name['let'] = let
 
 #  Evaluation functions
 
@@ -78,7 +115,8 @@ def lisp_eval(simb, items):
     if simb in name:
         return call(name[simb], eval_lists(items))
     else:
-       return [simb] + items
+        stored_vars[simb] = items[0]
+        return [simb] + items
 
 def call(f, l):
     try:
@@ -178,7 +216,7 @@ def p_item_empty(p):
 def p_call(p):
     'call : LPAREN SIMB items RPAREN'
     if DEBUG: print "Calling", p[2], "with", p[3] 
-    p[0] = lisp_eval(p[2], p[3])   
+    p[0] = lisp_eval(p[2], p[3])
 
 def p_atom_simbol(p):
     'atom : SIMB'
@@ -212,9 +250,10 @@ def p_nil(p):
     'atom : NIL'
     p[0] = None
 
+
 # Error rule for syntax errors
 def p_error(p):
-    print "Syntax error!! ",p
+    print "Syntax error!! ",
 
 # Build the parser
 # Use this if you want to build the parser using SLR instead of LALR
