@@ -101,11 +101,14 @@ name['print'] = _print
 
 
 def let(l):
-    assignment = l[0]
-    for i in assignment:
-        if not isinstance(i, int):
-            del stored_vars[i]
-    print(l[-1])
+    if len(l) > 1:
+        assignment = l[0]
+        for i in assignment:
+            if not isinstance(i, int):
+                del stored_vars[i]
+        print(l[-1])
+    else:
+        print(l[0][1])
 
 name['let'] = let
 
