@@ -112,6 +112,19 @@ def let(l):
 
 name['let'] = let
 
+
+def bool_if(l):
+    if len(l) == 3:
+        exp = l[0]
+        if exp:
+            print l[1]
+        else:
+            print l[2]
+    else:
+        print("Invalid number of arguments")
+
+name['if'] = bool_if
+
 #  Evaluation functions
 
 def lisp_eval(simb, items):
