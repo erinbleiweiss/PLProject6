@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from yacc import yacc, lisp_str
 import cmd
+import lis
 
 class MiniLisp(cmd.Cmd):     # See https://docs.python.org/2/library/cmd.html
     """
@@ -29,14 +30,13 @@ class MiniLisp(cmd.Cmd):     # See https://docs.python.org/2/library/cmd.html
         """Do nothing on empty input line"""
         pass
 
-    def default(self, line):       
+    def default(self, line):
         """Called on an input line when the command prefix is not recognized.
            In that case we execute the line as Python code.
         """
         result = yacc.parse(line)
-        s = lisp_str(result)
-        if s != 'nil':
-            print s
+        print "result is: ", result
+        print lis.eval(result)
 
 if __name__ == '__main__':
         ml = MiniLisp()

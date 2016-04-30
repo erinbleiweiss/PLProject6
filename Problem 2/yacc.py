@@ -75,10 +75,11 @@ name['print'] = _print
 #  Evaluation functions
 
 def lisp_eval(simb, items):
-    if simb in name:
-        return call(name[simb], eval_lists(items))
-    else:
-       return [simb] + items
+    # if simb in name:
+    #     return call(name[simb], eval_lists(items))
+    # else:
+    #    return [simb] + items
+    return [simb] + items
 
 def call(f, l):
     try:
@@ -137,7 +138,9 @@ def p_exp_call(p):
 
 def p_quoted_list(p):
     'quoted_list : QUOTE list'
-    p[0] = p[2]
+    # p[0] = p[2]
+    p[0] = ["quote"] + [p[2]]
+    print "Quote p[0] is: ", p[0]
 
 def p_list(p):
     'list : LPAREN items RPAREN'
@@ -177,8 +180,12 @@ def p_item_empty(p):
 
 def p_call(p):
     'call : LPAREN SIMB items RPAREN'
-    if DEBUG: print "Calling", p[2], "with", p[3] 
-    p[0] = lisp_eval(p[2], p[3])   
+    global ast
+    if DEBUG: print "Calling", p[2], "with", p[3]
+    ast = [p[2]] + [i for i in p[3]]
+    print "ast is ", ast
+    p[0] = ast
+    # p[0] = lisp_eval(p[2], p[3])
 
 def p_atom_simbol(p):
     'atom : SIMB'
